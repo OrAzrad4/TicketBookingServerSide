@@ -24,7 +24,7 @@ public class SearchService {
             // Retrieve all tickets from file
             List<Ticket> allTickets = ticketDao.findAll();
 
-            // If search query is empty, return the entire list
+            // If search query is empty, return the entire list --> connect to Client side to show all Tickets on first screen
             if (searchName == null || searchName.trim().isEmpty()) {
                 return allTickets;
             }
