@@ -1,8 +1,6 @@
 package com.hit.server;
 
-/**
- * Entry point for the Server application.
- */
+
 public class ServerDriver {
 
     public static void main(String[] args) {

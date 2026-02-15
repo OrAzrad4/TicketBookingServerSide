@@ -21,7 +21,7 @@ public class TicketController {
         this.searchService = searchService;
     }
 
-    // --- Exposed API methods with Exception Handling ---
+    //  Exposed API methods with Exception Handling
 
     public boolean saveTicket(Ticket ticket) {
         try {

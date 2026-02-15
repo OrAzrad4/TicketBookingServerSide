@@ -9,10 +9,10 @@ import java.util.Map;
  */
 public class Request<T> implements Serializable {
 
-    // Metadata (e.g., "action": "ticket/save")
+    // Action to do
     private Map<String, String> headers;
 
-    // The payload (Ticket, ID, or Search Query)
+    // The members (Ticket, ID, Name)
     private T body;
 
     // Default Constructor

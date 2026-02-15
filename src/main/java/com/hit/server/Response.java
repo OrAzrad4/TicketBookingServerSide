@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class Response<T> implements Serializable {
 
-    // Metadata (e.g., "action": "ticket/save", "status": "OK")
+    // Metadata ("action": "ticket/save", "status": "OK")
     private Map<String, String> headers;
 
     // The result data (Ticket object, List of Tickets, or String message)

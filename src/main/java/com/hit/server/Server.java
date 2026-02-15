@@ -28,17 +28,17 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        // 1. Initialize DAO (Data Layer)
+        //  Initialize DAO (Data Layer)
         IDao<Long, Ticket> dao = new TicketDaoImpl("src/main/resources/datasource.txt");
 
-        // 2. Initialize Algorithm (from JAR)
+        // Initialize Algorithm (from JAR)
         IAlgoLongestCommonSubsequence algo = new LCSDynamicMatrixAlgoImpl();
 
-        // 3. Initialize Services (Business Logic)
+        // Initialize Services (Business Logic)
         TicketService ticketService = new TicketService(dao);
         SearchService searchService = new SearchService(algo, dao);
 
-        // 4. Initialize Controller (Interface Layer)
+        //  Initialize Controller (Interface Layer)
         ControllerFactory factory = new ControllerFactory(ticketService, searchService);
         TicketController controller = factory.getTicketController();
         try (ServerSocket serverSocket = new ServerSocket(port)) {

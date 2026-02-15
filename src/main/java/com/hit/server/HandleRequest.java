@@ -30,28 +30,28 @@ public class HandleRequest implements Runnable {
 
     @Override
     public void run() {
-        try (Scanner reader = new Scanner(new InputStreamReader(socket.getInputStream()));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true)) {
 
-            // 1. Read JSON Request
-            String jsonRequest = reader.nextLine();
+            //  Read JSON Request
+            String jsonRequest = reader.readLine();
 
-            // 2. Parse into Generic Request<Object>
+            //  Parse into Generic Request<Object>
             // We use generic Object because body type is unknown yet (Map, Ticket, etc.)
             Type requestType = new TypeToken<Request<Object>>(){}.getType();
             Request<Object> request = gson.fromJson(jsonRequest, requestType);
 
-            // 3. Extract Headers
+            //  Extract Headers
             String action = request.getHeaders().get("action");
 
-            // 4. Convert Body to JSON string for specific parsing inside switch
+            //  Convert Body to JSON string for specific parsing inside switch
             String bodyJson = gson.toJson(request.getBody());
 
             // Prepare Response parts
             Object responseBody = null;
             String status = "OK";
 
-            // 5. Route Action to Controller
+            //  Route Action to Controller
             switch (action) {
                 case "ticket/save": {
                     Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
@@ -84,14 +84,14 @@ public class HandleRequest implements Runnable {
                     responseBody = "Unknown Action";
             }
 
-            // 6. Construct Response Object
+            //  Construct Response Object
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put("action", action);
             responseHeaders.put("status", status);
 
             Response<Object> response = new Response<>(responseHeaders, responseBody);
 
-            // 7. Send JSON Response back
+            //  Send JSON Response back
             String jsonResponse = gson.toJson(response);
             writer.println(jsonResponse);
 
