@@ -21,7 +21,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
     }
 
     @Override
-    public boolean save(Ticket entity) throws IllegalArgumentException, IOException {
+    public synchronized boolean save(Ticket entity) throws IllegalArgumentException, IOException { //Synchronized for race condition
         List<Ticket> allTickets = findAll();
         boolean found = false;
 
@@ -45,7 +45,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
     }
 
     @Override
-    public void delete(Ticket entity) throws IllegalArgumentException, IOException {
+    public synchronized void delete(Ticket entity) throws IllegalArgumentException, IOException {
         List<Ticket> allTickets = findAll();
         boolean removed = false;
 
@@ -66,7 +66,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
     }
 
     @Override
-    public Ticket find(Long id) throws IllegalArgumentException, IOException {
+    public synchronized Ticket find(Long id) throws IllegalArgumentException, IOException {
         List<Ticket> allTickets = findAll();
 
         // Search for ticket by ID
@@ -80,7 +80,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
 
     @SuppressWarnings("unchecked")    // I am sure that this file contain only Tickets so I dont need warning from compiler
     @Override
-    public List<Ticket> findAll() throws IOException {
+    public synchronized List<Ticket> findAll() throws IOException {
         List<Ticket> tickets = new ArrayList<>();
         File file = new File(fileName);
 
