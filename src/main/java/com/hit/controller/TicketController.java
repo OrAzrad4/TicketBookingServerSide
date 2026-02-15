@@ -10,7 +10,6 @@ import java.util.List;
  * Controller Layer.
  * Acts as a facade/bridge between the Networking layer (HandleRequest)
  * and the Business Logic layer (Services).
- * Handles exceptions thrown by the underlying layers.
  */
 public class TicketController {
 

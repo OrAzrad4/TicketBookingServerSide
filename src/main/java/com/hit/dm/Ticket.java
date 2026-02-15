@@ -3,7 +3,7 @@ package com.hit.dm;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Ticket implements Serializable {
+public class Ticket implements Serializable {     // Serializable to use objectOutputStream to write to the file directly on TicketDaoImpl
 
     private static final long serialVersionUID = 1L;
 

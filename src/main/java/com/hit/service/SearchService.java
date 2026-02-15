@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SearchService {
 
-    // מחזיק את הממשק של האלגוריתם (LCS)
+    // hold's the algorithm interface
     private IAlgoLongestCommonSubsequence algo;
     private IDao<Long, Ticket> ticketDao;
 
@@ -21,28 +21,36 @@ public class SearchService {
         List<Ticket> results = new ArrayList<>();
 
         try {
-            // 1. שליפת כל הכרטיסים מהקובץ
+            // Retrieve all tickets from file
             List<Ticket> allTickets = ticketDao.findAll();
 
-            // אם החיפוש ריק, החזר את כל הרשימה
+            // If search query is empty, return the entire list
             if (searchName == null || searchName.trim().isEmpty()) {
                 return allTickets;
             }
 
-            // 2. מעבר על הכרטיסים וסינון בעזרת האלגוריתם
+            // for loop on Tickets and skip unnamed tickets
             for (Ticket ticket : allTickets) {
                 String eventName = ticket.getEventName();
 
-                // בדיקת תקינות (למנוע קריסה על null)
                 if (eventName == null) continue;
 
-                // הפעלת האלגוריתם: חישוב אורך תת-המחרוזת המשותפת
-                int lcsLength = algo.calculateLCS(eventName, searchName);
 
-                // התנאי: אם אורך הרצף המשותף שווה לאורך מילת החיפוש,
-                // זה אומר שכל האותיות בחיפוש קיימים בשם האירוע (לפי הסדר)
-                if (lcsLength == searchName.length()) {
-                    results.add(ticket);
+                // Calculate Length of Algorithm result and length of search
+                int lcsLength = algo.calculateLCS(eventName, searchName);
+                int searchLen = searchName.length();
+
+                // If this is short word we want accurate matching
+                if (searchLen <= 2) {
+                    if (lcsLength == searchLen) {
+                        results.add(ticket);
+                    }
+                }
+                // If this is long word we can "forgive" 2 letters for effective search
+                else {
+                    if (lcsLength >= searchLen - 2) {
+                        results.add(ticket);
+                    }
                 }
             }
 

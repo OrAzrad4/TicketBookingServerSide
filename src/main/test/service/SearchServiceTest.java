@@ -29,7 +29,7 @@ public class SearchServiceTest {
         try {
             List<Ticket> results = service.findSimilarEvents("Test Event");
 
-            // For now we expect for empty list beacause we need implement all the functions in dao
+            // We expect for empty list beacause we need to fill the datasource
             System.out.println("Method execution finished. Result: " + results);
 
         } catch (Exception e) {

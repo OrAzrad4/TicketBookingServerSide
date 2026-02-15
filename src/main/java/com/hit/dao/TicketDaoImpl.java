@@ -78,7 +78,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")    // I am sure that this file contain only Tickets so I dont need warning from compiler
     @Override
     public List<Ticket> findAll() throws IOException {
         List<Ticket> tickets = new ArrayList<>();

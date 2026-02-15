@@ -15,6 +15,5 @@ public class ControllerFactory {
     public TicketController getTicketController() {
         return ticketController;
     }
-
-    // אם בעתיד יהיו עוד קונטרולרים, נוסיף אותם כאן
+     //If in the future we will add more controllers so we add here
 }

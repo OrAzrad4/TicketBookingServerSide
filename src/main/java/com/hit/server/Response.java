@@ -12,7 +12,7 @@ public class Response<T> implements Serializable {
     // Metadata (e.g., "action": "ticket/save", "status": "OK")
     private Map<String, String> headers;
 
-    // The result payload (Ticket object, List of Tickets, or String message)
+    // The result data (Ticket object, List of Tickets, or String message)
     private T body;
 
     // Default Constructor

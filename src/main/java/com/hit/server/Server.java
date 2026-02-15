@@ -14,7 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * The main server class implementing Runnable.
+ * The main server class implementing Runnable - in the future we can do more things at the same time with run the server.
  * Responsible for initializing the layers and accepting clients.
  */
 public class Server implements Runnable {
