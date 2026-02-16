@@ -37,7 +37,7 @@ public class HandleRequest implements Runnable {
             String jsonRequest = reader.readLine();
 
             //  Parse into Generic Request<Object>
-            // We use generic Object because body type is unknown yet (Map, Ticket, etc.)
+            // We use generic Object because body type is unknown yet (Map, Ticket...)
             Type requestType = new TypeToken<Request<Object>>(){}.getType();
             Request<Object> request = gson.fromJson(jsonRequest, requestType);
 

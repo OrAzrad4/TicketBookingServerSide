@@ -28,7 +28,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        //  Initialize DAO (Data Layer)
+        //  Initialize DAO
         IDao<Long, Ticket> dao = new TicketDaoImpl("src/main/resources/datasource.txt");
 
         // Initialize Algorithm (from JAR)
@@ -38,7 +38,7 @@ public class Server implements Runnable {
         TicketService ticketService = new TicketService(dao);
         SearchService searchService = new SearchService(algo, dao);
 
-        //  Initialize Controller (Interface Layer)
+        //  Initialize Controller
         ControllerFactory factory = new ControllerFactory(ticketService, searchService);
         TicketController controller = factory.getTicketController();
         try (ServerSocket serverSocket = new ServerSocket(port)) {

@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Represents the request protocol sent from Client to Server.
- * Supports Generic Body <T> and Headers for metadata.
+ * Supports Generic Body <T> for flexibility and Headers for metadata.
  */
 public class Request<T> implements Serializable {
 
