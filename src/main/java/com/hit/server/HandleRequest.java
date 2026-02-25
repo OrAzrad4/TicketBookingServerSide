@@ -11,9 +11,9 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Handles a single client connection.
- * Reads Request -> Invokes Controller -> Writes Response.
+/*
+  Handles a single client connection.
+  Reads Request -> Invokes Controller -> Writes Response.
  */
 public class HandleRequest implements Runnable {
 

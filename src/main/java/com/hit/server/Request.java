@@ -2,10 +2,6 @@ package com.hit.server;
 
 import java.util.Map;
 
-/**
- * Represents the request protocol sent from Client to Server.
- * Supports Generic Body <T> for flexibility and Headers for metadata.
- */
 public class Request<T>  {
 
     // Action to do
