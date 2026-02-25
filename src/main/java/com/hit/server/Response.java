@@ -1,13 +1,12 @@
 package com.hit.server;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Represents the response protocol sent from Server back to Client.
  * Wraps the result data with metadata headers. Use Generics to be flexible
  */
-public class Response<T> implements Serializable {
+public class Response<T>  {
 
     // Metadata ("action": "ticket/save", "status": "OK")
     private Map<String, String> headers;

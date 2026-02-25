@@ -3,7 +3,6 @@ package com.hit.controller;
 import com.hit.dm.Ticket;
 import com.hit.service.SearchService;
 import com.hit.service.TicketService;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,44 +20,21 @@ public class TicketController {
         this.searchService = searchService;
     }
 
-    //  Exposed API methods with Exception Handling
+    //  Exposed API methods - now throwing exceptions upwards!
 
-    public boolean saveTicket(Ticket ticket) {
-        try {
-            return ticketService.addNewTicket(ticket);
-        } catch (Exception e) {
-            // Log the error and return false indicating failure
-            e.printStackTrace();
-            return false;
-        }
+    public boolean saveTicket(Ticket ticket) throws Exception {
+        return ticketService.addNewTicket(ticket);
     }
 
-    public void deleteTicket(Ticket ticket) {
-        try {
-            ticketService.removeTicket(ticket);
-        } catch (Exception e) {
-            // Log the error
-            e.printStackTrace();
-        }
+    public void deleteTicket(Ticket ticket) throws Exception {
+        ticketService.removeTicket(ticket);
     }
 
-    public Ticket getTicket(Long id) {
-        try {
-            return ticketService.getTicket(id);
-        } catch (Exception e) {
-            // Log the error and return null if not found or error occurred
-            e.printStackTrace();
-            return null;
-        }
+    public Ticket getTicket(Long id) throws Exception {
+        return ticketService.getTicket(id);
     }
 
-    public List<Ticket> searchTickets(String query) {
-        try {
-            return searchService.findSimilarEvents(query);
-        } catch (Exception e) {
-            // Log the error and return an empty list
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+    public List<Ticket> searchTickets(String query) throws Exception {
+        return searchService.findSimilarEvents(query);
     }
 }

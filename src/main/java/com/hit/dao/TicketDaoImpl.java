@@ -39,7 +39,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
         if (map.remove(entity.getId()) != null) {
             writeAll(map);
         } else {
-            throw new IllegalArgumentException("Ticket with id " + entity.getId() + " not found.");
+            throw new IllegalArgumentException("Ticket with id " + entity.getId() + " not found."); // Cant delete unknown Ticket
         }
 
 
@@ -70,7 +70,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             return (Map<Long, Ticket>) in.readObject();
         } catch (Exception e) {
-            return new HashMap<>();
+            return new HashMap<>();   // dont crash just make a new map
         }
     }
 

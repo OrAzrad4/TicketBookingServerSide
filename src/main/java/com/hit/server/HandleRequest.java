@@ -10,7 +10,6 @@ import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Handles a single client connection.
@@ -30,75 +29,87 @@ public class HandleRequest implements Runnable {
 
     @Override
     public void run() {
+        // Using Reader and Writer
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true)) {
 
-            //  Read JSON Request
+            // Read the request
             String jsonRequest = reader.readLine();
+            if (jsonRequest == null) return;
 
-            //  Parse into Generic Request<Object>
-            // We use generic Object because body type is unknown yet (Map, Ticket...)
+            // Convert from Json to generic request type
             Type requestType = new TypeToken<Request<Object>>(){}.getType();
             Request<Object> request = gson.fromJson(jsonRequest, requestType);
 
-            //  Extract Headers
+            // get the action from headers but dont know yet what the data in body(Ticket, ID ...)
             String action = request.getHeaders().get("action");
 
-            //  Convert Body to JSON string for specific parsing inside switch
+            // Convert the body again to Json and then know on switch case to which type need to convert
             String bodyJson = gson.toJson(request.getBody());
 
-            // Prepare Response parts
             Object responseBody = null;
             String status = "OK";
 
-            //  Route Action to Controller
-            switch (action) {
-                case "ticket/save": {
-                    Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
-                    boolean success = controller.saveTicket(ticket);
-                    responseBody = success ? "Success" : "Failed";
-                    break;
+            try {
+                // Navigate to the correct action
+                switch (action) {
+                    case "ticket/save": {
+                        Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
+                        boolean success = controller.saveTicket(ticket);
+                        responseBody = success ? "Success" : "Failed";
+                        break;
+                    }
+                    case "ticket/delete": {
+                        Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
+                        controller.deleteTicket(ticket);
+                        responseBody = "Deleted";
+                        break;
+                    }
+                    case "ticket/get": {
+                        Map<String, Object> bodyMap = gson.fromJson(bodyJson, Map.class); // Convert to map beacuse body is not full object just id
+                        Number idNum = (Number) bodyMap.get("id"); // Convert from deafault double to Number
+                        responseBody = controller.getTicket(idNum.longValue()); // Update the response in long type correct parameter
+                        break;
+                    }
+                    case "ticket/search": {
+                        Map<String, String> bodyMap = gson.fromJson(bodyJson, Map.class); // Convert to map beacuse body is not full object its string
+                        String query = bodyMap.get("searchQuery");  // Convert to string
+                        responseBody = controller.searchTickets(query); // Update the response in string type correct parameter
+                        break;
+                    }
+                    default:  // if not valid action
+                        status = "Error";
+                        responseBody = "Unknown Action";
                 }
-                case "ticket/delete": {
-                    Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
-                    controller.deleteTicket(ticket);
-                    responseBody = "Deleted";
-                    break;
-                }
-                case "ticket/get": {
-                    // Extract ID from map (Gson parses numbers as Doubles)
-                    Map<String, Object> bodyMap = gson.fromJson(bodyJson, Map.class);
-                    Number idNum = (Number) bodyMap.get("id");
-                    responseBody = controller.getTicket(idNum.longValue());
-                    break;
-                }
-                case "ticket/search": {
-                    // Extract search query
-                    Map<String, String> bodyMap = gson.fromJson(bodyJson, Map.class);
-                    String query = bodyMap.get("searchQuery");
-                    responseBody = controller.searchTickets(query);
-                    break;
-                }
-                default:
-                    status = "Error";
-                    responseBody = "Unknown Action";
+            } catch (Exception e) {
+                status = "Error";   // status ok until invalid action
+                responseBody = e.getMessage();
+                e.printStackTrace();
             }
 
-            //  Construct Response Object
+            // Build response Headers hashmap
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put("action", action);
             responseHeaders.put("status", status);
 
+            // Build all the response (have to hold Object because responseBody)
             Response<Object> response = new Response<>(responseHeaders, responseBody);
 
-            //  Send JSON Response back
+            // Send the response on string
             String jsonResponse = gson.toJson(response);
             writer.println(jsonResponse);
 
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
+            System.out.println("Connection error: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            try {
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
