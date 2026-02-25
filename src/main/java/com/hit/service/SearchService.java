@@ -25,7 +25,7 @@ public class SearchService {
             List<Ticket> allTickets = ticketDao.findAll();
 
             // If search query is empty, return the entire list --> connect to Client side to show all Tickets on first screen
-            if (searchName == null || searchName.trim().isEmpty()) {
+            if (searchName == null || searchName.trim().isEmpty()) { // null if have mistake on json - protect from bug
                 return allTickets;
             }
 

@@ -3,7 +3,9 @@ package com.hit.dao;
 import com.hit.dm.Ticket;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TicketDaoImpl implements IDao<Long, Ticket> {
 
@@ -22,91 +24,61 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
 
     @Override
     public synchronized boolean save(Ticket entity) throws IllegalArgumentException, IOException { //Synchronized for race condition
-        List<Ticket> allTickets = findAll();
-        boolean found = false;
-
-        // Iterate to update existing ticket
-        for (int i = 0; i < allTickets.size(); i++) {
-            if (allTickets.get(i).getId().equals(entity.getId())) {
-                allTickets.set(i, entity); // Update
-                found = true;
-                break;
-            }
-        }
-
-        // If not found, add new ticket
-        if (!found) {
-            allTickets.add(entity);
-        }
-
-        // Write changes to file
-        writeAll(allTickets);
+        Map<Long, Ticket> map = findAllAsMap();
+        // put handles Add new ticket and Update existing ticket automatically because the hashmap
+        map.put(entity.getId(), entity);
+        writeAll(map);
         return true;
     }
 
     @Override
     public synchronized void delete(Ticket entity) throws IllegalArgumentException, IOException {
-        List<Ticket> allTickets = findAll();
-        boolean removed = false;
+        Map<Long, Ticket> map = findAllAsMap();
 
-        // Find and remove the ticket
-        for (int i = 0; i < allTickets.size(); i++) {
-            if (allTickets.get(i).getId().equals(entity.getId())) {
-                allTickets.remove(i);
-                removed = true;
-                break;
-            }
-        }
-
-        if (removed) {
-            writeAll(allTickets);
+        // Find and remove the ticket. If remove returns null, the ID didn't exist.
+        if (map.remove(entity.getId()) != null) {
+            writeAll(map);
         } else {
             throw new IllegalArgumentException("Ticket with id " + entity.getId() + " not found.");
         }
+
+
     }
 
     @Override
     public synchronized Ticket find(Long id) throws IllegalArgumentException, IOException {
-        List<Ticket> allTickets = findAll();
-
-        // Search for ticket by ID
-        for (Ticket ticket : allTickets) {
-            if (ticket.getId().equals(id)) {
-                return ticket;
-            }
-        }
-        return null;
+        return findAllAsMap().get(id); // O(1) because hashmap
     }
 
     @SuppressWarnings("unchecked")    // I am sure that this file contain only Tickets so I dont need warning from compiler
-    @Override
+    @Override                         // This function convert the data from map to list for SearchService use LCS
     public synchronized List<Ticket> findAll() throws IOException {
-        List<Ticket> tickets = new ArrayList<>();
-        File file = new File(fileName);
-
-        // If file doesn't exist, return empty list (don't crash)
-        if (!file.exists()) {
-            return tickets;
-        }
-
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            Object obj = in.readObject();
-            if (obj instanceof List) {
-                tickets = (List<Ticket>) obj;
-            }
-        } catch (EOFException e) {
-            // File is empty, valid state
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return tickets;
+        Map<Long, Ticket> map = findAllAsMap();
+        return new ArrayList<>(map.values());
     }
 
-    // Helper method to rewrite the entire list to the file
-    private void writeAll(List<Ticket> tickets) throws IOException {
+
+      // Helper method to bring all data as map
+    @SuppressWarnings("unchecked")                  // I am sure that this file contain only Tickets so I dont need warning from compiler
+    private Map<Long, Ticket> findAllAsMap() throws IOException {
+        File file = new File(fileName);
+
+        // If file doesn't exist or is empty, return empty map (don't crash)
+        if (!file.exists() || file.length() == 0) {
+            return new HashMap<>();
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (Map<Long, Ticket>) in.readObject();
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+    }
+
+
+    // Helper method to rewrite the entire map to the file
+    private void writeAll(Map<Long, Ticket> map) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            out.writeObject(tickets);
+            out.writeObject(map);
         }
     }
 }
