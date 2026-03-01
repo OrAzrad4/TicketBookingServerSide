@@ -50,7 +50,7 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
         return findAllAsMap().get(id); // O(1) because hashmap
     }
 
-    @SuppressWarnings("unchecked")    // I am sure that this file contain only Tickets so I dont need warning from compiler
+
     @Override                         // This function convert the data from map to list for SearchService use LCS
     public synchronized List<Ticket> findAll() throws IOException {
         Map<Long, Ticket> map = findAllAsMap();
@@ -59,7 +59,6 @@ public class TicketDaoImpl implements IDao<Long, Ticket> {
 
 
       // Helper method to bring all data as map
-    @SuppressWarnings("unchecked")                  // I am sure that this file contain only Tickets so I dont need warning from compiler
     private Map<Long, Ticket> findAllAsMap() throws IOException {
         File file = new File(fileName);
 
