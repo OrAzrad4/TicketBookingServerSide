@@ -46,9 +46,9 @@ public class SearchService {
                         results.add(ticket);
                     }
                 }
-                // If this is long word we can "forgive" 2 letters for effective search
+                // If this is long word we can "forgive" 1 letter for effective search
                 else {
-                    if (lcsLength >= searchLen - 2) {
+                    if (lcsLength >= searchLen - 1) {
                         results.add(ticket);
                     }
                 }

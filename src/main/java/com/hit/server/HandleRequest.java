@@ -55,9 +55,16 @@ public class HandleRequest implements Runnable {
                 switch (action) {
                     case "ticket/save": {
                         Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
-                        boolean success = controller.saveTicket(ticket);
-                        responseBody = success ? "Success" : "Failed";
+                        if (controller.getTicket(ticket.getId()) != null) {  // if this id already exist
+                            status = "Error";
+                            responseBody = "Ticket with this ID already exists!";
+                        } else {
+                            boolean success = controller.saveTicket(ticket);
+                            responseBody = success ? "Success" : "Failed";
+                        }
                         break;
+
+
                     }
                     case "ticket/delete": {
                         Ticket ticket = gson.fromJson(bodyJson, Ticket.class);
