@@ -65,8 +65,8 @@ public class HandleRequest implements Runnable {
                         responseBody = "Deleted";
                         break;
                     }
-                    case "ticket/get": {
-                        Map<String, Object> bodyMap = gson.fromJson(bodyJson, Map.class); // Convert to map beacuse body is not full object just id
+                    case "ticket/get": {  // Not used currently in Client side I write this for futures updates
+                        Map<String, Object> bodyMap = gson.fromJson(bodyJson, Map.class); // Convert to map beacuse body is not full object only id
                         Number idNum = (Number) bodyMap.get("id"); // Convert from deafault double to Number
                         responseBody = controller.getTicket(idNum.longValue()); // Update the response in long type correct parameter
                         break;
@@ -105,7 +105,7 @@ public class HandleRequest implements Runnable {
         } finally {
             try {
                 if (socket != null && !socket.isClosed()) {
-                    socket.close();
+                    socket.close();   // After sending the response I can close the socket
                 }
             } catch (IOException e) {
                 e.printStackTrace();

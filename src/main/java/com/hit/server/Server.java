@@ -28,7 +28,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        //  Initialize DAO
+        //  Initialize DAO (One instance - singleton)
         IDao<Long, Ticket> dao = new TicketDaoImpl("src/main/resources/datasource.txt");
 
         // Initialize Algorithm (from JAR)
@@ -49,7 +49,7 @@ public class Server implements Runnable {
                 Socket clientSocket = serverSocket.accept();
 
                 // Handle request in a separate thread
-                new Thread(new HandleRequest(clientSocket, controller)).start();
+                new Thread(new HandleRequest(clientSocket, controller)).start();  // If I have more controllers I send the Factory
             }
 
         } catch (IOException e) {
